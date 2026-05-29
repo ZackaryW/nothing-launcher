@@ -10,7 +10,6 @@ import kotlin.math.abs
 class MainActivity : AppCompatActivity() {
 
     private lateinit var gestureDetector: GestureDetector
-    private var appMenuState = AppMenuState.CLOSED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,20 +21,8 @@ class MainActivity : AppCompatActivity() {
         return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
     }
 
-    override fun onResume() {
-        super.onResume()
-        appMenuState = AppMenuState.CLOSED
-    }
-
     private fun openAppMenu() {
         startActivity(Intent(this, AppsActivity::class.java))
-    }
-
-    private fun openAppMenuIfClosed() {
-        if (appMenuState == AppMenuState.CLOSED) {
-            appMenuState = AppMenuToggle.nextState(appMenuState)
-            openAppMenu()
-        }
     }
 
     private inner class SwipeListener : GestureDetector.SimpleOnGestureListener() {
@@ -47,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            openAppMenuIfClosed()
+            openAppMenu()
             return true
         }
 
