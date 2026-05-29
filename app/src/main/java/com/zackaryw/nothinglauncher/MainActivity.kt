@@ -25,8 +25,8 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, AppsActivity::class.java))
     }
 
-    private fun toggleAppMenu(currentState: AppMenuState) {
-        if (AppMenuToggle.nextState(currentState) == AppMenuState.OPEN) {
+    private fun openAppMenuIfClosed() {
+        if (AppMenuToggle.nextState(AppMenuState.CLOSED) == AppMenuState.OPEN) {
             openAppMenu()
         }
     }
@@ -35,8 +35,12 @@ class MainActivity : AppCompatActivity() {
         private val swipeThreshold = 100
         private val swipeVelocityThreshold = 100
 
+        override fun onDown(e: MotionEvent): Boolean {
+            return true
+        }
+
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            toggleAppMenu(AppMenuState.CLOSED)
+            openAppMenuIfClosed()
             return true
         }
 

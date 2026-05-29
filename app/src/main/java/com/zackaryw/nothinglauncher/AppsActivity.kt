@@ -3,7 +3,9 @@ package com.zackaryw.nothinglauncher
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -25,14 +27,37 @@ class AppsActivity : AppCompatActivity() {
             )
             launchIntent?.let { startActivity(it) }
         }
-        recyclerView.setOnClickListener {
-            toggleAppMenu(AppMenuState.OPEN)
+        recyclerView.addOnItemTouchListener(AppMenuBackgroundClickListener(recyclerView))
+    }
+
+    private fun closeAppMenuIfOpen() {
+        if (AppMenuToggle.nextState(AppMenuState.OPEN) == AppMenuState.CLOSED) {
+            finish()
         }
     }
 
-    private fun toggleAppMenu(currentState: AppMenuState) {
-        if (AppMenuToggle.nextState(currentState) == AppMenuState.CLOSED) {
-            finish()
+    private inner class AppMenuBackgroundClickListener(
+        private val recyclerView: RecyclerView
+    ) : RecyclerView.SimpleOnItemTouchListener() {
+        private val gestureDetector = GestureDetector(
+            this@AppsActivity,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDown(e: MotionEvent): Boolean {
+                    return true
+                }
+
+                override fun onSingleTapUp(e: MotionEvent): Boolean {
+                    if (recyclerView.findChildViewUnder(e.x, e.y) != null) {
+                        return false
+                    }
+                    closeAppMenuIfOpen()
+                    return true
+                }
+            }
+        )
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            return gestureDetector.onTouchEvent(e)
         }
     }
 
