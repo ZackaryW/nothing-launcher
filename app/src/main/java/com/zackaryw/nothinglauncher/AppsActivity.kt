@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class AppsActivity : AppCompatActivity() {
 
+    private var appMenuState = AppMenuState.OPEN
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_apps)
@@ -31,7 +33,8 @@ class AppsActivity : AppCompatActivity() {
     }
 
     private fun closeAppMenuIfOpen() {
-        if (AppMenuToggle.nextState(AppMenuState.OPEN) == AppMenuState.CLOSED) {
+        if (appMenuState == AppMenuState.OPEN) {
+            appMenuState = AppMenuToggle.nextState(appMenuState)
             finish()
         }
     }
@@ -57,7 +60,7 @@ class AppsActivity : AppCompatActivity() {
         )
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-            return gestureDetector.onTouchEvent(e)
+            return gestureDetector.onTouchEvent(e) && recyclerView.findChildViewUnder(e.x, e.y) == null
         }
     }
 

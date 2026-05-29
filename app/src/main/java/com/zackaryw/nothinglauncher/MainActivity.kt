@@ -10,6 +10,7 @@ import kotlin.math.abs
 class MainActivity : AppCompatActivity() {
 
     private lateinit var gestureDetector: GestureDetector
+    private var appMenuState = AppMenuState.CLOSED
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,12 +22,18 @@ class MainActivity : AppCompatActivity() {
         return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
     }
 
+    override fun onResume() {
+        super.onResume()
+        appMenuState = AppMenuState.CLOSED
+    }
+
     private fun openAppMenu() {
         startActivity(Intent(this, AppsActivity::class.java))
     }
 
     private fun openAppMenuIfClosed() {
-        if (AppMenuToggle.nextState(AppMenuState.CLOSED) == AppMenuState.OPEN) {
+        if (appMenuState == AppMenuState.CLOSED) {
+            appMenuState = AppMenuToggle.nextState(appMenuState)
             openAppMenu()
         }
     }
