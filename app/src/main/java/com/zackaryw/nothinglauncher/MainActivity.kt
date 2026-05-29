@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
         private val swipeThreshold = 100
         private val swipeVelocityThreshold = 100
 
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            openAppMenu()
+            return true
+        }
+
         override fun onFling(
             e1: MotionEvent?,
             e2: MotionEvent,

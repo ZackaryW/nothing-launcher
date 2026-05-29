@@ -3,7 +3,9 @@ package com.zackaryw.nothinglauncher
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -12,10 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class AppsActivity : AppCompatActivity() {
+    private lateinit var gestureDetector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_apps)
+
+        gestureDetector = GestureDetector(this, CloseMenuTapListener())
 
         val recyclerView = findViewById<RecyclerView>(R.id.apps_recycler)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -24,6 +29,9 @@ class AppsActivity : AppCompatActivity() {
                 app.activityInfo.packageName
             )
             launchIntent?.let { startActivity(it) }
+        }
+        recyclerView.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
         }
     }
 
@@ -66,5 +74,12 @@ class AppsActivity : AppCompatActivity() {
         }
 
         override fun getItemCount() = apps.size
+    }
+
+    private inner class CloseMenuTapListener : GestureDetector.SimpleOnGestureListener() {
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            finish()
+            return false
+        }
     }
 }
