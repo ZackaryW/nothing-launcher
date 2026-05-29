@@ -25,6 +25,15 @@ class AppsActivity : AppCompatActivity() {
             )
             launchIntent?.let { startActivity(it) }
         }
+        recyclerView.setOnClickListener {
+            toggleAppMenu(AppMenuState.OPEN)
+        }
+    }
+
+    private fun toggleAppMenu(currentState: AppMenuState) {
+        if (AppMenuToggle.nextState(currentState) == AppMenuState.CLOSED) {
+            finish()
+        }
     }
 
     private fun getInstalledApps(): List<ResolveInfo> {
