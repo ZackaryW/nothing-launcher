@@ -33,6 +33,7 @@ class AppsActivity : AppCompatActivity() {
     private inner class AppMenuBackgroundClickListener(
         private val recyclerView: RecyclerView
     ) : RecyclerView.SimpleOnItemTouchListener() {
+        private var isTrackingBackgroundTap = false
         private val gestureDetector = GestureDetector(
             this@AppsActivity,
             object : GestureDetector.SimpleOnGestureListener() {
@@ -41,7 +42,7 @@ class AppsActivity : AppCompatActivity() {
                 }
 
                 override fun onSingleTapUp(e: MotionEvent): Boolean {
-                    if (!isAppMenuBackground(e)) {
+                    if (!isTrackingBackgroundTap) {
                         return false
                     }
                     handleMenuClick(AppMenuState.OPEN)
@@ -51,10 +52,17 @@ class AppsActivity : AppCompatActivity() {
         )
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-            if (!isAppMenuBackground(e)) {
+            if (e.actionMasked == MotionEvent.ACTION_DOWN) {
+                isTrackingBackgroundTap = isAppMenuBackground(e)
+            }
+            if (!isTrackingBackgroundTap) {
                 return false
             }
-            return gestureDetector.onTouchEvent(e)
+            val handled = gestureDetector.onTouchEvent(e)
+            if (e.actionMasked == MotionEvent.ACTION_UP || e.actionMasked == MotionEvent.ACTION_CANCEL) {
+                isTrackingBackgroundTap = false
+            }
+            return handled
         }
 
         private fun isAppMenuBackground(e: MotionEvent): Boolean {
