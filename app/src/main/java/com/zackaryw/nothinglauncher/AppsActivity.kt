@@ -41,20 +41,31 @@ class AppsActivity : AppCompatActivity() {
                 }
 
                 override fun onSingleTapUp(e: MotionEvent): Boolean {
-                    if (recyclerView.findChildViewUnder(e.x, e.y) != null) {
+                    if (!isAppMenuBackground(e)) {
                         return false
                     }
-                    finish()
+                    handleMenuClick(AppMenuState.OPEN)
                     return true
                 }
             }
         )
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-            if (recyclerView.findChildViewUnder(e.x, e.y) != null) {
+            if (!isAppMenuBackground(e)) {
                 return false
             }
             return gestureDetector.onTouchEvent(e)
+        }
+
+        private fun isAppMenuBackground(e: MotionEvent): Boolean {
+            return recyclerView.findChildViewUnder(e.x, e.y) == null
+        }
+    }
+
+    private fun handleMenuClick(currentState: AppMenuState) {
+        when (AppMenuToggle.nextState(currentState)) {
+            AppMenuState.CLOSED -> finish()
+            AppMenuState.OPEN -> Unit
         }
     }
 
