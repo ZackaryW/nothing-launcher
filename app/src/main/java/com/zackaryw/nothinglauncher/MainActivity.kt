@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.math.abs
 
@@ -16,9 +15,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         gestureDetector = GestureDetector(this, SwipeListener())
-        findViewById<View>(R.id.home_screen).setOnClickListener {
-            toggleAppMenu(AppMenuState.CLOSED)
-        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -38,6 +34,11 @@ class MainActivity : AppCompatActivity() {
     private inner class SwipeListener : GestureDetector.SimpleOnGestureListener() {
         private val swipeThreshold = 100
         private val swipeVelocityThreshold = 100
+
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            toggleAppMenu(AppMenuState.CLOSED)
+            return true
+        }
 
         override fun onFling(
             e1: MotionEvent?,
