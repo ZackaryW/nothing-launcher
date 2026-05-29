@@ -28,3 +28,15 @@ cd nothing-launcher
 ```
 
 Requires JDK 17+. The Gradle wrapper downloads the Android build tools automatically on first run.
+
+## Delivery validation
+
+Before considering a development cycle complete, run the product-facing BDD
+suite, system BDD suite, unit tests, and debug build:
+
+```bash
+python -m behave features/functional
+python -m behave features/system
+./gradlew testDebugUnitTest
+./gradlew assembleDebug
+```

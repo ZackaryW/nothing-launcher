@@ -29,6 +29,18 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Install BDD test runner
+        run: python -m pip install behave
+
+      - name: Run functional BDD suite
+        run: python -m behave features/functional
+
+      - name: Run system BDD suite
+        run: python -m behave features/system
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
       - name: Build debug APK
         run: ./gradlew assembleDebug
 

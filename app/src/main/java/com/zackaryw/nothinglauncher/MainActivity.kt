@@ -25,9 +25,25 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, AppsActivity::class.java))
     }
 
+    private fun handleMenuClick(currentState: AppMenuState) {
+        when (AppMenuToggle.nextState(currentState)) {
+            AppMenuState.OPEN -> openAppMenu()
+            AppMenuState.CLOSED -> Unit
+        }
+    }
+
     private inner class SwipeListener : GestureDetector.SimpleOnGestureListener() {
         private val swipeThreshold = 100
         private val swipeVelocityThreshold = 100
+
+        override fun onDown(e: MotionEvent): Boolean {
+            return true
+        }
+
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            handleMenuClick(AppMenuState.CLOSED)
+            return true
+        }
 
         override fun onFling(
             e1: MotionEvent?,

@@ -3,7 +3,9 @@ package com.zackaryw.nothinglauncher
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -24,6 +26,54 @@ class AppsActivity : AppCompatActivity() {
                 app.activityInfo.packageName
             )
             launchIntent?.let { startActivity(it) }
+        }
+        recyclerView.addOnItemTouchListener(AppMenuBackgroundClickListener(recyclerView))
+    }
+
+    private inner class AppMenuBackgroundClickListener(
+        private val recyclerView: RecyclerView
+    ) : RecyclerView.SimpleOnItemTouchListener() {
+        private var isTrackingBackgroundTap = false
+        private val gestureDetector = GestureDetector(
+            this@AppsActivity,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onDown(e: MotionEvent): Boolean {
+                    return true
+                }
+
+                override fun onSingleTapUp(e: MotionEvent): Boolean {
+                    if (!isTrackingBackgroundTap) {
+                        return false
+                    }
+                    handleMenuClick(AppMenuState.OPEN)
+                    return true
+                }
+            }
+        )
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            if (e.actionMasked == MotionEvent.ACTION_DOWN) {
+                isTrackingBackgroundTap = isAppMenuBackground(e)
+            }
+            if (!isTrackingBackgroundTap) {
+                return false
+            }
+            val handled = gestureDetector.onTouchEvent(e)
+            if (e.actionMasked == MotionEvent.ACTION_UP || e.actionMasked == MotionEvent.ACTION_CANCEL) {
+                isTrackingBackgroundTap = false
+            }
+            return handled
+        }
+
+        private fun isAppMenuBackground(e: MotionEvent): Boolean {
+            return recyclerView.findChildViewUnder(e.x, e.y) == null
+        }
+    }
+
+    private fun handleMenuClick(currentState: AppMenuState) {
+        when (AppMenuToggle.nextState(currentState)) {
+            AppMenuState.CLOSED -> finish()
+            AppMenuState.OPEN -> Unit
         }
     }
 

@@ -11,8 +11,8 @@ android {
         applicationId = "com.zackaryw.nothinglauncher"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     buildTypes {
@@ -37,4 +37,5 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)
+    testImplementation(libs.junit)
 }
