@@ -14,13 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class AppsActivity : AppCompatActivity() {
-    private lateinit var gestureDetector: GestureDetector
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_apps)
-
-        gestureDetector = GestureDetector(this, CloseMenuTapListener())
 
         val recyclerView = findViewById<RecyclerView>(R.id.apps_recycler)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -30,8 +26,18 @@ class AppsActivity : AppCompatActivity() {
             )
             launchIntent?.let { startActivity(it) }
         }
+        val tapDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
+                if (recyclerView.findChildViewUnder(event.x, event.y) == null) {
+                    finish()
+                    return true
+                }
+                return false
+            }
+        })
         recyclerView.setOnTouchListener { _, event ->
-            gestureDetector.onTouchEvent(event)
+            tapDetector.onTouchEvent(event)
+            false
         }
     }
 
@@ -74,12 +80,5 @@ class AppsActivity : AppCompatActivity() {
         }
 
         override fun getItemCount() = apps.size
-    }
-
-    private inner class CloseMenuTapListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
-            finish()
-            return false
-        }
     }
 }
